@@ -1,0 +1,86 @@
+.fixh3 h3{
+    margin-top: -5px;
+    margin-bottom: 6px;
+}
+.fixh2{
+    margin-top: -5px;
+    margin-bottom: 6px;
+}
+.ui-overlay-a, .ui-page-theme-a, .ui-page-theme-a .ui-panel-wrapper{
+/*background: #DDDDDD!important;*/
+/*background-image: url("../img/light-wool.png")!important;
+background-color: #e0e0e0;*/
+background-color: #e0e0e0;
+background-image: url("../img/low-contrast-linen.png");
+
+}
+.ui-btn-icon-left::after, .ui-btn-icon-right::after, .ui-btn-icon-top::after, .ui-btn-icon-bottom::after, .ui-btn-icon-notext::after{
+    background-color: #336797!important;
+}
+
+.transition {
+    width: 230px;
+    /*height: 150px;*/
+    background: white;
+    /*transition: width 2s, height 2s, margin 2s;*/
+    margin: 50px auto 0;
+    font-size: 15px;
+    padding: 15px;
+    border: 3px solid #336797;
+    border-radius: 15px;
+    display: none;
+    margin-top: 20%;
+}
+#mypanel{
+    background-color: #336797;
+}
+/*.transition:hover{
+	display: block;
+    width: 100%;
+    height: 300px;
+    margin: 0 auto;
+}*/
+.popupMensajes{
+    background-color: #FCDEDE!important;
+}
+.popupMensajes h2{
+    color: #ED1717!important;
+}
+.popupMensajes #popupErrores li{
+    background-color: #FCDEDE;
+    color: black;
+}
+.popupMensajes #popupErrores{
+    margin-top: 0px;
+    padding-bottom: 15px;
+}
+
+#popupSavePosi .ui-content{
+    background-color: #FFFFFF;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.text-right{
+    text-align: right;
+}
+
+.inlineInputBoton > div {
+    width: 81%;
+    display: inline-block;
+}
+.inlineInputBoton > a {
+    display: inline-block;
+    vertical-align: top;
+    top: 3px
+}
+#listaAgendaContactos > li > a {
+    line-height: 1;
+    color: black;
+}
+#listaAgendaContactos > li > a > small {
+    line-height: 1;
+    color: grey;
+}
