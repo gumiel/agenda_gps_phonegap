@@ -1,4 +1,4 @@
-# agenda_gps_phonegap
+# AGENDAGPS EN PHONEGAP
 Agenda GPS desarrollada en phonegap y jquery movil.
 Esta aplicación para celulares android fue testeada en versiones android 4.0.1 4.4 y 5.1.
 La aplicacion necesita tener activado el GPS del celular para obtener la posición actual y tener internet para mostrar en un mapa de google maps.
