@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />        
+        <link rel="stylesheet" href="css/themes/default/jquery.mobile-1.4.5.min.css">        
+        
+        <script src="js/jquery.min.js"></script>
+        <script src="js/jquery.mobile-1.4.5.min.js"></script>
+        <script type="text/javascript"
+          src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCeMWq44VkPTeQ9FPB9aOFdSwD9bz1S4VQ&sensor=TRUE">
+        </script>
+        
+        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+        <script src="js/app.js"></script>
+        
+
+    <title>Agenda GPS</title>
+</head>
+<body onload="initialize()">
+<style type="text/css">
+.ui-bar-a, .ui-page-theme-a .ui-bar-inherit, html .ui-bar-a .ui-bar-inherit, html .ui-body-a .ui-bar-inherit, html body .ui-group-theme-a .ui-bar-inherit{
+    background: none;   
+    border-bottom: 0px;
+}
+</style>
+<!-- ********************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+INICIO
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+********************************************************************* -->
+    <div data-role="page" id="inicio">
+
+        <div data-role="panel" id="mypanel" data-position="right" data-theme="b">
+            <div class="ui-panel-inner">
+                <h3>MENU</h3>
+                
+                <a href="#"  class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-bullets ui-btn-icon-left ui-btn-inline">Gestionar Categorías</a>
+                
+                <p>
+                    Opciones para poder subir a internet, Importar o exportar y más.
+                </p>
+                <a href="#configuracion"  class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-gear ui-btn-icon-left ui-btn-inline" data-transition="slidefade">Configuración</a>
+
+                <ul data-role="listview" data-inset="true" >
+                    <li data-role="list-divider">Conexiones</li>
+                    <li data-icon="check"><a class="estado-gmaps" href="#" >Google Mapas</a></li>
+                    <li data-icon="delete"><a class="estado-gps" href="#">GPS</a></li>                
+                </ul>
+                <a data-inline="true" href="#informacionDev"  class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-power ui-btn-icon-left ui-btn-inline" onclick="navigator.app.exitApp();">Salir</a>
+                <a data-inline="true" href="#demo-links" data-rel="close" class="ui-btn ui-shadow ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-left ui-btn-inline">Cerrar</a>
+                <p><a href="#informacion" data-transition="slidefade">Información</a></p> 
+            </div>
+        </div><!-- /panel -->
+        
+
+        <div data-role="header" data-tap-toggle="false" style="height: 0px;">
+            <a href="#inicio" class="ui-btn ui-icon-home ui-btn-icon-left" style="z-index: 500" data-transition="slidefade">Inicio</a>            
+            <h1>Agenda GPS</h1>
+            <a href="#mypanel" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all" style="z-index: 500">No text</a>            
+        </div><!-- /header -->
+
+        <div role="main" class="ui-content" style="padding: 0px">
+            <div class="transition" >
+                Sin Conexión:
+                <ul>                    
+                    <li>Internet</li>
+                    <li>GPS</li>
+                </ul>                
+                <div id="posicion-gps"></div>
+            </div>
+            <div id="map-canvas" align="center" style="width: 100%; height: 510px"></div>
+        </div>
+        
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false" >
+            <div data-role="navbar">
+                <ul>
+                    <li>                        
+                        <a href="#lista_posiciones" class="ui-btn ui-icon-bullets ui-btn-icon-top" data-transition="slidefade">Lista<br> Posiciones</a>
+                    </li>
+                    <li>   
+                        <a href="#popupSavePosi" class="ui-btn ui-icon-edit ui-btn-icon-top" data-rel="dialog" data-transition="pop">Guardar<br>Mi Posición</a>
+                    </li>
+                    <li>
+                        <a href="#inicio" class="ui-btn ui-icon-location ui-btn-icon-top" id="buscarPosicion" data-transition="slidefade">Mi<br>Posición</a>
+                    </li>
+                </ul>
+            </div><!-- /navbar -->
+        </div><!-- /footer -->
+    </div>
+
+    
+    <div data-role="page" id="lista_posiciones" >    
+        
+        <div data-role="header" data-tap-toggle="false">
+            <a href="#inicio" class="ui-btn ui-icon-home ui-btn-icon-left" style="z-index: 500" data-transition="slidefade">Inicio</a>            
+            <h1>Agenda GPS</h1>
+            <a href="#mypanel" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all" style="z-index: 500">No text</a>            
+        </div><!-- /header -->
+        
+        <div role="main" class="ui-content">        
+            <h3>Lista de Posiciones</h3>            
+            <ul data-role="listview" data-filter="true" data-filter-placeholder="Buscar ..." id="listview_posiciones">
+                <li><a href="#detalle_posicion" class="mostrar_detalle" data-transition="slidefade">Cargando....</a></li>
+            </ul>
+        </div><!-- /content -->
+
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false" >
+            <div data-role="navbar">
+                <ul>
+                    <!-- <li><a href="#" class="ui-btn-active">One</a></li> -->
+                    <li>                        
+                        <a href="#lista_posiciones" class="ui-btn-active ui-icon-bullets ui-btn-icon-top" data-transition="slidefade">Lista<br> Posiciones</a>
+                    </li>
+                    <li>   
+                        <a href="#popupSavePosi" class="ui-btn ui-icon-edit ui-btn-icon-top" data-rel="dialog" data-transition="pop">Guardar<br>Mi Posición</a>
+                    </li>
+                    <li>
+                        <a href="#inicio" class="ui-btn ui-icon-location ui-btn-icon-top" id="buscarPosicion" data-transition="slidefade">Mi<br>Posición</a>
+                    </li>
+                </ul>
+            </div><!-- /navbar -->
+        </div><!-- /footer -->
+    </div><!-- /page -->
+
+
+    
+    <div data-role="page" id="detalle_posicion">
+
+        <div data-role="header" data-tap-toggle="false">
+            <a href="#inicio" class="ui-btn ui-icon-home ui-btn-icon-left" style="z-index: 500" data-transition="slidefade">Inicio</a>            
+            <h1>Agenda GPS</h1>
+            <a href="#mypanel" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all" style="z-index: 500">No text</a>            
+        </div><!-- /header -->
+
+        <div role="main" class="ui-content">        
+            <h3>Detalles de posición</h3>            
+            <div class="contenedorP">
+                <div>
+                    <p><span><b>Titulo: </b></span><span id="tituloP"></span></p>
+                    <p><span><b>Categoría: </b></span><span id="categoriaP"></span></p>
+                    <p><span><b>Descripción: </b></span><span id="descripcionP"></span></p>
+                    <p><span><b>Posición: </b></span>Lat-<span id="latitudP"></span>,Lon-<span id="longitudP"></span></p>
+                    <p><button id="mostrarMapaPosicion" data-lat=''  data-lon='' class="ui-btn ui-icon-location ui-btn-icon-left">Ver en mapa</button></p>
+                    <p><span><b>Foto: </b><span id="fotoP"></span></p>
+                    <p><img id="imagenFotoP" src="" style="width:100%" ></p>                    
+                </div>
+                
+                <fieldset class="ui-grid-a">
+                    <div class="ui-block-a">
+                        <a href="#" data-id="" data-role="button" data-icon="delete" data-theme="c" id="eliminarPosicion">Eliminar</a>   
+                    </div>
+                    <div class="ui-block-b">
+                        <a href="#editar_posicion" data-id="" class="ui-btn ui-icon-edit ui-btn-icon-right" id="editarPosicion">Editar</a>
+                    </div>     
+                </fieldset>                
+
+            </div>
+        </div><!-- /content -->
+
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false" >
+            <div data-role="navbar">
+                <ul>
+                    <!-- <li><a href="#" class="ui-btn-active">One</a></li> -->
+                    <li>                        
+                        <a href="#lista_posiciones" class="ui-btn ui-icon-bullets ui-btn-icon-top" data-transition="slidefade">Lista<br> Posiciones</a>
+                    </li>
+                    <li>   
+                        <a href="#popupSavePosi" class="ui-btn ui-icon-edit ui-btn-icon-top" data-rel="dialog" data-transition="pop">Guardar<br>Mi Posición</a>
+                    </li>
+                    <li>
+                        <a href="#inicio" class="ui-btn ui-icon-location ui-btn-icon-top" id="buscarPosicion" data-transition="slidefade">Mi<br>Posición</a>
+                    </li>
+                </ul>
+            </div><!-- /navbar -->
+        </div><!-- /footer -->
+
+    </div><!-- /page -->
+
+
+
+
+
+
+    <div data-role="page" id="editar_posicion">
+
+        <div data-role="header" data-tap-toggle="false">
+            <a href="#inicio" class="ui-btn ui-icon-home ui-btn-icon-left" style="z-index: 500" data-transition="slidefade">Inicio</a>            
+            <h1>Agenda GPS</h1>
+            <a href="#mypanel" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all" style="z-index: 500">No text</a>            
+        </div><!-- /header -->
+
+        <div role="main" class="ui-content">        
+            
+            <!-- <h3>Editar de Datos Generales</h3>  -->
+            <div class="contenedorEditar">                
+                
+                <div data-role="collapsible" data-collapsed="false" data-iconpos="right">
+                    <h4>Editar datos generales</h4>
+                    <label for="nombreMiPosicionE">Nombre principal:</label>
+                    <input name="nombreMiPosicionE" id="nombreMiPosicionE" value="" type="text">
+                    <fieldset data-role="controlgroup">
+                        <legend>Categoría:</legend>
+                            
+                        <input name="categoriaMiPosicionE" class="categoriaMiPosicionE"  id="radio51" value="comercial" type="radio">
+                        <label for="radio51">Tiendas comercial</label>
+
+                        <input name="categoriaMiPosicionE" class="categoriaMiPosicionE" id="radio52" value="empresa" type="radio">
+                        <label for="radio52">Empresas</label>
+                        
+                        <input name="categoriaMiPosicionE" class="categoriaMiPosicionE" id="radio53" value="servicio" type="radio">
+                        <label for="radio53">Tiendas de servicios</label>
+                        
+                        <input name="categoriaMiPosicionE" class="categoriaMiPosicionE" id="radio54" value="otros" type="radio">
+                        <label for="radio54">Otros</label>
+
+                    </fieldset>
+                    <label for="descripMiPosicionE">Descripciones adicionales:</label>
+                    <textarea cols="40" rows="8" name="descripMiPosicionE" id="descripMiPosicionE"></textarea>
+                    <p style="text-align: center">
+                        <a class="ui-btn ui-shadow ui-corner-all ui-btn-inline ui-icon-back ui-btn-icon-left" data-rel="back" href="#">Volver</a>
+                        <a id="editarDatosPosicionE" data-id="" class="ui-btn ui-shadow ui-corner-all ui-btn-inline ui-icon-check ui-btn-icon-left" href="#">Editar Datos</a>
+                    </p> 
+                       
+                </div>
+                
+                
+                <div data-role="collapsible" data-collapsed="false" data-iconpos="right">
+                    <h4>Editar fotografía tomada</h4>
+                    <div class="ui-body ui-body-a">                        
+                        <a href="#" id="tomarFotoE" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-camera">
+                            Cambiar Foto
+                        </a>                        
+                        <p><b>Foto: </b><span id="fotoE"></span></p>                
+                        <div>
+                          <img src="" id="imagenTomadaE" style="display:none;width:100%" >
+                        </div>
+                    </div>
+                </div>
+
+
+                <div data-role="collapsible" data-collapsed="false" data-iconpos="right">
+                    <h3>Editar Posición GPS</h3>
+                    <div class="ui-body ui-body-a">
+                        <a href="#" id="mostrarMapaPosicionE" data-lat='' data-lon='' class="ui-btn ui-icon-location ui-btn-icon-right">Ver en mapa</a>
+                        <p>
+                            <span><b>Posición guardada: </b></span>
+                            <ul>
+                                <li>Latitud: <span id="latitudE"></span></li>
+                                <li>Longitud: <span id="longitudE"></span></li>
+                            </ul>
+                        </p>
+                        <a href="#" class="ui-btn ui-icon-edit ui-btn-icon-right">Editar Posición</a>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /content -->
+
+        <div data-role="footer" data-position="fixed">        
+            <div data-role="navbar">
+                <ul>
+                    <li>
+                        <a data-icon="bullets" href="#lista_posiciones" data-transition="slidefade">
+                            Lista<br> Posiciones
+                        </a>
+                    </li>
+                    <li>                    
+                        <a data-icon="edit" href="#popupSavePosi" data-rel="dialog" data-transition="pop">
+                            Guardar<br>Mi Posición
+                        </a>
+                    </li>
+                    <li>
+                        <a data-icon="location" href="#inicio" id="buscarPosicion" data-transition="slidefade">
+                            Buscar<br>Mi Posición
+                        </a>
+                    </li>
+                </ul>
+            </div><!-- /navbar -->
+        </div><!-- /footer -->
+
+    </div><!-- /page -->
+
+
+
+
+
+
+
+
+
+
+
+<!-- ********************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+PAGINA DE INFORMACION
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+********************************************************************* -->
+<div data-role="page" id="informacion">
+
+        <div data-role="header" data-tap-toggle="false">
+            <a href="#inicio" class="ui-btn ui-icon-home ui-btn-icon-left" style="z-index: 500" data-transition="slidefade">Inicio</a>            
+            <h1>Agenda GPS</h1>
+            <a href="#mypanel" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all" style="z-index: 500">No text</a>            
+        </div><!-- /header -->
+
+        <div role="main" class="ui-content" style="padding: 0px">
+            <h2 class="text-center">Información</h2>
+            <p>Mi nombre es Henry, soy programador y con esta aplicación trato de ayudar a las a personas, empresas, instituciones
+            o cualquier persona que necesite tener una agenda con posicionamiento GPS para que pueda volver al mismo lugar donde registró.</p>
+            <p></p>
+            <p>Mi página web es www.devbolivia.com</p>
+            <p>Skype: prez.gumiel</p>
+            <p>Email: prez.gumiel@gmail.com</p>
+            <p>Puede ver un video de la aplicaciones en </p>
+            <p><a href="www.youtube.com" class="ui-btn">Ver video de la aplicación</a></p>
+        </div>
+        
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false" >
+            <div data-role="navbar">
+                <ul>                    
+                    <li>                        
+                        <a href="#lista_posiciones" class="ui-btn ui-icon-bullets ui-btn-icon-top" data-transition="slidefade">Lista<br> Posiciones</a>
+                    </li>
+                    <li>   
+                        <a href="#popupSavePosi" class="ui-btn ui-icon-edit ui-btn-icon-top" data-rel="dialog" data-transition="pop">Guardar<br>Mi Posición</a>
+                    </li>
+                    <li>
+                        <a href="#inicio" class="ui-btn ui-icon-location ui-btn-icon-top" id="buscarPosicion" data-transition="slidefade">Mi<br>Posición</a>
+                    </li>
+                </ul>
+            </div><!-- /navbar -->
+        </div><!-- /footer -->
+</div>
+
+
+
+<!-- ********************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+PAGINA DE CONFIGURACION
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+********************************************************************* -->
+<div data-role="page" id="configuracion">
+
+        <div data-role="header" data-tap-toggle="false">
+            <a href="#inicio" class="ui-btn ui-icon-home ui-btn-icon-left" style="z-index: 500" data-transition="slidefade">Inicio</a>            
+            <h1>Agenda GPS</h1>
+            <a href="#mypanel" class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all" style="z-index: 500">No text</a>            
+        </div><!-- /header -->
+
+        <div role="main" class="ui-content" style="padding: 0px">
+            <h2 class="text-center">Configuración</h2>
+            <p>Si desea eliminar todos los datos y las imágenes de toda la aplicación. Presione el siguiente botón</p>            
+            <p class="text-center">
+                <a href="#confEliminarTodo" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-forbidden ui-btn-icon-left">Eliminar todos los datos</a>
+            </p>
+            <div data-role="popup" id="confEliminarTodo" data-overlay-theme="b" data-dismissible="false" style="max-width:400px;">
+                <div data-role="header" style="background: #336797;color: white;text-shadow: 2px 2px black;">
+                <h1>Confirmación</h1>
+                </div>
+                <div role="main" class="ui-content">
+                    <h3 class="ui-title">Desea eliminar todos los registros de la aplicación?</h3>   
+                    <div class="text-right">                        
+                        <a id="borrarTodo" href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-transition="flow" style="background: #336797;color: white;text-shadow: 2px 2px black;">Eliminar</a>
+                        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline" data-rel="back" style="background: #336797;color: white;text-shadow: 2px 2px black;">Cancelar</a>
+                    </div>             
+                </div>
+            </div>
+
+            <hr>        
+            <a href="tel:+70307735">Llamar a henry</a>
+
+        </div>
+        
+        <div data-role="footer" data-position="fixed" data-tap-toggle="false" >
+            <div data-role="navbar">
+                <ul>                    
+                    <li>                        
+                        <a href="#lista_posiciones" class="ui-btn ui-icon-bullets ui-btn-icon-top" data-transition="slidefade">Lista<br> Posiciones</a>
+                    </li>
+                    <li>   
+                        <a href="#popupSavePosi" class="ui-btn ui-icon-edit ui-btn-icon-top" data-rel="dialog" data-transition="pop">Guardar<br>Mi Posición</a>
+                    </li>
+                    <li>
+                        <a href="#inicio" class="ui-btn ui-icon-location ui-btn-icon-top" id="buscarPosicion" data-transition="slidefade">Mi<br>Posición</a>
+                    </li>
+                </ul>
+            </div><!-- /navbar -->
+        </div><!-- /footer -->
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- ********************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+MODAL PARA AGREGAR UNA POSICION
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+*************************************************************************
+********************************************************************* -->
+
+    <div id="popupSavePosi" data-role="dialog" data-url="popupSavePosi" tabindex="0" class="ui-page ui-page-theme-a ui-dialog" style="">
+        <div data-role="popup" id="msjError" class="popupMensajes">
+            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+            <h2><b>Error</b></h2>
+            <p>
+                <ul id="popupErrores">                    
+                </ul>
+            </p>
+        </div>
+        <div role="dialog" class="ui-dialog-contain ui-overlay-shadow ui-corner-all">
+            <div data-theme="b" data-role="header" role="banner" class="ui-header ui-bar-b"><a role="button" href="#agregarP" class="ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext ui-btn-left" data-transition="pop" data-direction="reverse" data-rel="back">Cerrar</a>
+                <h1 class="ui-title" role="heading" aria-level="1">Posición GPS</h1>
+            </div><!-- /header -->
+
+            <div class="ui-content" role="main">
+                <h2 class="fixh2">Guardar mi Posición</h2>
+                
+                <label for="nombreMiPosicion"><u>Nombre principal:</u></label>
+                
+                <span class="inlineInputBoton">
+                    <input name="nombreMiPosicion" id="nombreMiPosicion" value="" type="text" class="ui-btn-inline">
+                    <a href="#agendaContactos" data-rel="popup" data-position-to="window" data-transition="pop" class="ui-btn ui-icon-user ui-btn-icon-notext ui-corner-all ui-btn-inline">No text</a>   
+                </span>                                
+
+                <fieldset data-role="controlgroup">
+                    <legend><u>Categoría:</u></legend>
+                        
+                    <input name="categoriaMiPosicion" id="radio1" value="comercial" checked="checked" type="radio">
+                    <label for="radio1">Tiendas comercial</label>
+
+                    <input name="categoriaMiPosicion" class="categoriaMiPosicion" id="radio2" value="empresa" type="radio">
+                    <label for="radio2">Empresas</label>
+                    
+                    <input name="categoriaMiPosicion" class="categoriaMiPosicion" id="radio3" value="servicio" type="radio">
+                    <label for="radio3">Tiendas de servicios</label>
+                    
+                    <input name="categoriaMiPosicion" class="categoriaMiPosicion" id="radio4" value="otros" type="radio">
+                    <label for="radio4">Otros</label>
+
+                </fieldset>
+
+                <label for="descripMiPosicion"><u>Descripción adicionales:</u></label>                
+                <button id="tomarFoto" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-camera">Tomar foto</button>
+                <div>
+                  <img src="" id="imagenTomada" style="display:none;width:100%" >
+                </div>
+                <textarea cols="40" rows="8" name="descripMiPosicion" id="descripMiPosicion"></textarea>
+                <p style="text-align: center">
+                    <a class="ui-btn ui-shadow ui-corner-all ui-btn-inline ui-icon-back ui-btn-icon-left" data-rel="back" href="#">Volver</a>
+                    <a id="guardarMiPosicion" class="ui-btn ui-shadow ui-corner-all ui-btn-inline ui-icon-check ui-btn-icon-left" href="#">Guardar</a>
+                </p>
+
+                <div data-role="popup" id="agendaContactos" data-overlay-theme="b" data-dismissible="false" style="max-width:400px;">
+                    <div data-role="header" style="background: #336797;color: white;text-shadow: 2px 2px black;">
+                        <h1>Agenda</h1>
+                    </div>
+                    <div role="main" class="ui-content">
+                        <ul id="listaAgendaContactos" data-role="listview" data-filter="true" data-filter-placeholder="Buscar nombre..." data-inset="true">
+                            <li data-icon="plus"><a href="#">Cargando.....<br><small>..</small></a></li>                            
+                        </ul>
+                        <div id="gifCargando" class="text-center">
+                            <img src="img/loading.gif" />
+                        </div>
+                    </div>
+                </div>
+                
+            </div><!-- /content -->
+        </div>
+    </div>
+
+
+    
+
+    </body>
+</html>
