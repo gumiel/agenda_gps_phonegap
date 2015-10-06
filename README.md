@@ -19,7 +19,7 @@ Se uso: <br>
 
 Más Detalles...
 ===================
-
+Esta aplicación esta orientado para el uso de personas o instituciones que necesiten recordar lugares especificos como encargados de distribucion, visitadores medicos, etc. Que son personas que constantemente van recorriendo varios lugares y necesitan recordar. 
 
 Capturas de pantalla
 ===================
